@@ -11,9 +11,9 @@ const router = createRouter({
     routes: [
       {path: '/login', name: 'login', component: LoginView},
       {path: '/create', name: 'create', component: CreateProjectView},
-      {path: '/project-list', name: 'project-list', component: ProjectList},
-      {path: '/project-details', name: 'project-details', component: ProjectDetailsView},
-      {path: '/project-final', name: 'project-final', component: FinalProjectView}
+      {path: '/projects', name: 'projects', component: ProjectList},
+      {path: '/projects/:_id', name: 'project-details', component: ProjectDetailsView},
+      {path: '/projects-final', name: 'projects-final', component: FinalProjectView}
     ]
   })
   
