@@ -20,7 +20,7 @@
 
 
     
-    fetch("http://localhost:3000/project/get", request)
+    fetch("https://pjt.up.railway.app/project/get", request)
     .then(response => {
         if (response.status === 200) {
             return response.json();

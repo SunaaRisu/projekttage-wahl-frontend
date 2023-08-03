@@ -17,6 +17,13 @@ function on_click(){
     }
 }
 
+const username = ref('');
+const password = ref('');
+
+function onLogin() {
+
+}
+
 
 </script>
 
@@ -26,11 +33,11 @@ function on_click(){
     
     <main>
         <h1>Anmelden</h1>
-        <form action="">
+        <form @submit.prevent="$event => onLogin()">
            
             <div class="password-wrap">
-                <input class="textarea gap size" id="Benutzername" type="text" placeholder="Benutzername">
-                <input :type="visibility" class="textarea gap size" id="Passwort" placeholder="Passwort">
+                <input class="textarea gap size" id="Benutzername" type="text" placeholder="Benutzername" v-model="username">
+                <input :type="visibility" class="textarea gap size" id="Passwort" placeholder="Passwort" v-model="password">
                 <button @click="on_click" type="button" id="show-password">
                     <img id="eyeImg" :src="eye" :alt="altText">
                 
