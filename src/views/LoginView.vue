@@ -32,11 +32,11 @@ function on_click(){
                 <input class="textarea gap size" id="Benutzername" type="text" placeholder="Benutzername">
                 <input :type="visibility" class="textarea gap size" id="Passwort" placeholder="Passwort">
                 <button @click="on_click" type="button" id="show-password">
-                    <img :src="eye" :alt="altText">
+                    <img id="eyeImg" :src="eye" :alt="altText">
                 
                 </button>               
             </div>
-            <input class="gap size border" type="submit" value="Login">
+            <input class="gap size border white" type="submit" value="Login">
         </form>
     </main>
     
@@ -53,7 +53,12 @@ function on_click(){
     align-content: center;
     justify-content: center;
     flex-direction: column;
-    
+    background-color: #191919;
+    user-select: none;
+   }
+   input[type=submit]{
+    background-color: #191919;
+    color: #fff;
    }
    form{
     display: flex;
@@ -72,19 +77,25 @@ function on_click(){
    .size{
     font-size: 20px;
    }
+  
    .password-wrap{
     position: relative;
    }
    #show-password {
     position: absolute;
     top: 74%;
-    right:1rem;
+    right: 0px;
     transform: translateY(-50%);
     cursor: pointer;
     transition: 0.3s ease-out;
     width: 1.5rem;
     display: flex;
     align-items: center;
+    height: 1.5rem;
+    
+   }
+   #show-password:active{
+    border: none;
    }
    #show-password img {
     width: 500%;
@@ -94,6 +105,7 @@ function on_click(){
     background-color: transparent;
     border: none;
     position: absolute; right: 5px; top: 5px;
+
    }
    .border{
     border-radius: 10px;
@@ -108,6 +120,17 @@ function on_click(){
     padding: 15px 0;     
     font-size: 18px;     
     color: var(--white);
+    border-bottom: 1px solid #fff;
    }
-
+  input:focus{
+    outline: 0;
+  }
+  
+  #Passwort{
+    padding-right: 30px;
+   }
+  #eyeImg{
+    width: 1rem;
+    height: 1rem;
+  }
 </style>
