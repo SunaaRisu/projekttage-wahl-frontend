@@ -8,11 +8,11 @@
     --rb-c-black-soft: #222222;
     --rb-c-black-mute: #303036;
   
-    --rb-c-process-Cyan: #30BCED;
-    --rb-c-non-photo-blue: #89CCD6;
-    --rb-c-pearl: #e2dbbe;
-    --rb-c-vanilla: #d5d6aa;
-    --rb-c-lavender-floral: #a491d3;
+    --rb-c-rich-black: #031926;
+    --rb-c-teal: #468189;
+    --rb-c-cambridge-blue: #77ACA2;
+    --rb-c-ash-gray: #9DBEBB;
+    --rb-c-parchment: #F4E9CD;
   
   }
   
@@ -22,7 +22,7 @@
     --color-background-soft: var(--rb-c-white-soft);
     --color-background-mute: var(--rb-c-white-mute);
   
-    --color-text: var(--rb-c-black-mute);
+    --color-text: var(--rb-c-rich-black);
   }
   
   @media (prefers-color-scheme: dark) {
@@ -31,7 +31,7 @@
       --color-background-soft: var(--rb-c-black-soft);
       --color-background-mute: var(--rb-c-black-mute);
   
-      --color-text: var(--rb-c-white-mute);
+      --color-text: var(--rb-c-parchment);
     }
   }
   
@@ -54,6 +54,7 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    user-select: none;
     /* overflow: hidden; */
   }
   
