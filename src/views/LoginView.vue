@@ -17,10 +17,35 @@ function on_click(){
     }
 }
 
-const username = ref('');
+const identifier = ref('');
 const password = ref('');
+const errorMsg = ref('');
 
 function onLogin() {
+    const reqest = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ userIdentifier: identifier.value, password: password.value })
+    };
+
+    fetch("https://pjt.up.railway.app/user/login", reqest)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            }else if (response.status === 404) {
+                errorMsg.value = 'Dieses Konto wurde nicht gefunden.';
+            }else if (response.status === 406) {
+                errorMsg.value = 'Kombination aus Benutzername und Passwort wurde nicht gefunden.';
+            }else if (response.status === 500) {
+                errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+            }
+        })
+        .then(data => {
+            console.log(data.token)
+        })
+        .catch(err => {
+            errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+        })
 
 }
 
@@ -33,10 +58,11 @@ function onLogin() {
     
     <main>
         <h1>Anmelden</h1>
+        <p id="">{{ errorMsg }}</p>
         <form @submit.prevent="$event => onLogin()">
            
             <div class="password-wrap">
-                <input class="textarea gap size" id="Benutzername" type="text" placeholder="Benutzername" v-model="username">
+                <input class="textarea gap size" id="Benutzername" type="text" placeholder="Benutzername" v-model="identifier">
                 <input :type="visibility" class="textarea gap size" id="Passwort" placeholder="Passwort" v-model="password">
                 <button @click="on_click" type="button" id="show-password">
                     <img id="eyeImg" :src="eye" :alt="altText">
