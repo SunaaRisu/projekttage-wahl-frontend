@@ -3,8 +3,37 @@ import { ref } from 'vue';
 
 const passwordVisibility = ref(false)
 
-const username = ref('');
+const identifier = ref('');
 const password = ref('');
+const errorMsg = ref('');
+
+
+function onLogin() {
+    const reqest = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ userIdentifier: identifier.value, password: password.value })
+    };
+
+    fetch("https://pjt.up.railway.app/user/login", reqest)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            }else if (response.status === 404) {
+                errorMsg.value = 'Dieses Konto wurde nicht gefunden.';
+            }else if (response.status === 406) {
+                errorMsg.value = 'Kombination aus Benutzername und Passwort wurde nicht gefunden.';
+            }else if (response.status === 500) {
+                errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+            }
+        })
+        .then(data => {
+            console.log(data.token)
+        })
+        .catch(err => {
+            errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+        })
+
 
 function on_click(){
     if (passwordVisibility.value === false){
@@ -12,17 +41,16 @@ function on_click(){
     } else if (passwordVisibility.value === true){
         passwordVisibility.value = false;
     }
-}
-
-function onLogin() {
 
 }
+
 </script>
 
 
 <template>  
     <main>
         <h1>Anmelden</h1>
+        <p id="">{{ errorMsg }}</p>
         <form @submit.prevent="$event => onLogin()">           
             <input class="textarea" id="username" type="text" placeholder="Benutzername / ID" v-model="username" autocomplete="username">
             <input class="textarea" id="password" :type="passwordVisibility ? 'text' : 'password'" placeholder="Passwort" v-model="password" autocomplete="current-password">
