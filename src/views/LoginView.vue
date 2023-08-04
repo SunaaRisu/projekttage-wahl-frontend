@@ -31,9 +31,10 @@ function onLogin() {
             console.log(data.token)
         })
         .catch(err => {
-            errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+            // errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
         })
 
+}
 
 function on_click(){
     if (passwordVisibility.value === false){
@@ -41,9 +42,7 @@ function on_click(){
     } else if (passwordVisibility.value === true){
         passwordVisibility.value = false;
     }
-
 }
-
 </script>
 
 
@@ -52,7 +51,7 @@ function on_click(){
         <h1>Anmelden</h1>
         <p id="">{{ errorMsg }}</p>
         <form @submit.prevent="$event => onLogin()">           
-            <input class="textarea" id="username" type="text" placeholder="Benutzername / ID" v-model="username" autocomplete="username">
+            <input class="textarea" id="username" type="text" placeholder="Benutzername / ID" v-model="identifier" autocomplete="username">
             <input class="textarea" id="password" :type="passwordVisibility ? 'text' : 'password'" placeholder="Passwort" v-model="password" autocomplete="current-password">
             <button id="togglePwd" type="button" @click="on_click">
                 <svg v-if="!passwordVisibility" id="eyeImg" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" :alt="passwordVisibility ? 'Passwort verstecken' : 'Passwort anzeigen'">
