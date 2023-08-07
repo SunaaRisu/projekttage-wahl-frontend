@@ -1,39 +1,68 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '../store/index';
+import jwt_decode from "jwt-decode";
+
+const user = useUserStore();
+const router = useRouter();
 
 const passwordVisibility = ref(false)
 
 const identifier = ref('');
 const password = ref('');
 const errorMsg = ref('');
+const buttenDisable = ref(false);
 
 
 function onLogin() {
-    const reqest = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ userIdentifier: identifier.value, password: password.value })
-    };
+    buttenDisable.value = true;
+    errorMsg.value = '';
 
-    fetch("https://pjt.up.railway.app/user/login", reqest)
-        .then(response => {
-            if (response.status === 200) {
-                return response.json();
-            }else if (response.status === 404) {
-                errorMsg.value = 'Dieses Konto wurde nicht gefunden.';
-            }else if (response.status === 406) {
-                errorMsg.value = 'Kombination aus Benutzername und Passwort wurde nicht gefunden.';
-            }else if (response.status === 500) {
-                errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
-            }
-        })
-        .then(data => {
-            console.log(data.token)
-        })
-        .catch(err => {
-            errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
-        })
+    if (!identifier.value || !password.value) {
+            if(!identifier.value) {
+                errorMsg.value = 'Bitte fülle alle Felder aus';
+            } else if (!password.value) {
+                errorMsg.value = 'Bitte fülle alle Felder aus';
+            } 
+            buttenDisable.value = false;
+        } else if (identifier.value.includes("'") || identifier.value.includes('"') || identifier.value.includes('{') || identifier.value.includes('}') || identifier.value.includes('(') || identifier.value.includes(')') || identifier.value.includes('[') || identifier.value.includes(']') || identifier.value.includes(',')) {
+            errorMsg.value = '{}, (), [], ,, \' or ". are not allowd.';
+            buttenDisable.value = false;
+        } else {
+            const reqest = {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ userIdentifier: identifier.value, password: password.value })
+            };
 
+            fetch("https://pjt.up.railway.app/user/login", reqest)
+                .then(response => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }else if (response.status === 404) {
+                        errorMsg.value = 'Dieses Konto wurde nicht gefunden.';
+                    }else if (response.status === 406) {
+                        errorMsg.value = 'Kombination aus Benutzername und Passwort wurde nicht gefunden.';
+                    }else if (response.status === 500) {
+                        errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+                    }
+                })
+                .then(data => {
+                    if (data) {
+                        user.setJWT(data.token);
+                        const jwtData = jwt_decode(data.token);
+                        user.setUser(jwtData._id, jwtData.username);
+
+                        router.push({ path: '/projects' });
+                    }
+                })
+                .catch(err => {
+                    errorMsg.value = 'Das sollte nicht passieren. Bitte versuche es später erneut.';
+                });
+        }
+}
 
 function on_click(){
     if (passwordVisibility.value === false){
@@ -41,9 +70,7 @@ function on_click(){
     } else if (passwordVisibility.value === true){
         passwordVisibility.value = false;
     }
-
 }
-
 </script>
 
 
@@ -52,7 +79,7 @@ function on_click(){
         <h1>Anmelden</h1>
         <p id="">{{ errorMsg }}</p>
         <form @submit.prevent="$event => onLogin()">           
-            <input class="textarea" id="username" type="text" placeholder="Benutzername / ID" v-model="username" autocomplete="username">
+            <input class="textarea" id="username" type="text" placeholder="Benutzername / ID" v-model="identifier" autocomplete="username">
             <input class="textarea" id="password" :type="passwordVisibility ? 'text' : 'password'" placeholder="Passwort" v-model="password" autocomplete="current-password">
             <button id="togglePwd" type="button" @click="on_click">
                 <svg v-if="!passwordVisibility" id="eyeImg" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" :alt="passwordVisibility ? 'Passwort verstecken' : 'Passwort anzeigen'">
@@ -67,7 +94,7 @@ function on_click(){
                     </g>
                 </svg>
             </button>               
-            <button id="submitBtn" type="submit"><strong>Login</strong></button>
+            <button id="submitBtn" type="submit" :disabled="buttenDisable"><strong>Login</strong></button>
         </form>
     </main>    
 </template>
@@ -110,6 +137,14 @@ function on_click(){
 
     input:focus{
         outline: 0;
+    }
+
+    input:autofill{
+        background-color: transparent;
+    }
+
+    input:-webkit-autofill{
+        background-color: transparent;
     }
 
     #submitBtn{
