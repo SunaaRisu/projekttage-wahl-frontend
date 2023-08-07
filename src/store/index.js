@@ -1,8 +1,5 @@
 import { defineStore } from "pinia";
 import jwt_decode from "jwt-decode";
-import { useRouter } from "vue-router";
-
-// const router = useRouter();
 
 
 export const useUserStore = defineStore('user', {
@@ -23,46 +20,30 @@ export const useUserStore = defineStore('user', {
             this.user.id = id;
             this.user.username = username;
         },
-        get_jwt() {
-            console.log('first')
+        async get_jwt() {
             if (this.jwt !== '' && (jwt_decode(this.jwt).exp - 60) * 1000 > Date.now()) {
                 return this.jwt;
             } else {
-                console.log('second')
                 const request = {
                     method: 'GET',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
                 };
 
-                fetch('https://pjt.up.railway.app/user/refresh_token', request)
-                    .then(response => {
-                        if (response.status === 200){
-                            console.log('third')
-                            return response.json();
-                        }else if (response.status === 401){
-                            router.push({ path: '/login' });
-                        }else if (response.status === 500){
-                            router.push({ path: '/login' });
-                        }
-                    })
-                    .then(data => {
-                        if(data){
-                            console.log('fourth')
-                            this.jwt = data.token;
-                            const jwtData = jwt_decode(data.token);
-                            this.user.id = jwtData._id;
-                            this.user.username = jwtData.username;  
-                            return data.token                          
-                        }else{
-                            router.push({ path: '/login' });
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        router.push({ path: '/login' });
-                    })
-                
+                const response = await fetch('https://pjt.up.railway.app/user/refresh_token', request);
+
+                console.log('after fetch')
+                if (response.status !== 200) {
+                    this.$router.push({ path: '/login' });
+                    return 0;
+                }
+
+                const data = await response.json();
+                this.jwt = data.token;
+                const jwtData = jwt_decode(data.token);
+                this.user.id = jwtData._id;
+                this.user.username = jwtData.username;
+                return data.token                
             }
         }
     }
