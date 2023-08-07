@@ -2,41 +2,44 @@
     import { computed, onUpdated, ref } from 'vue';
     import ProjectItem from "../components/projectListItem.vue";
     import ProjectItemLoading from "../components/projextListItemLoading.vue";
+    import { useUserStore } from '../store/index';
 
-    const request = {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json'}
-    }; 
+    const user = useUserStore();
 
+    
     const fetchSuccess = ref(false)
     const projects = ref([]);
     
-
+    
     const filterCostFree = ref(false);
     const filterCostRange = ref(100);
     const filterCategorySport = ref(true);
     const filterCategoryCreativ = ref(true);
     const filterCategoryka = ref(true);
-
+    
+    
+    if (user.jwt !== '' && (jwt_decode(user.jwt).exp - 60) * 1000 > Date.now()) {
+        const request = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Baerer ' + user.jwt}
+        }; 
+            
+        fetch("https://pjt.up.railway.app/project/get", request)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                }                
+            })
+            .then(data => {
+                projects.value = data.objects;
+                fetchSuccess.value = true;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 
     
-    fetch("https://pjt.up.railway.app/project/get", request)
-    .then(response => {
-        if (response.status === 200) {
-            return response.json();
-        }
-        
-    })
-    .then(data => {
-        // console.log(data.objects);
-        projects.value = data.objects;
-        
-        // console.log(projects.value);
-        fetchSuccess.value = true;
-    })
-    .catch(err => {
-        console.log(err);
-    });
 
     onUpdated(() => {
         if (filterCostFree.value) {
