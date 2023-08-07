@@ -16,12 +16,13 @@
     const filterCategorySport = ref(true);
     const filterCategoryCreativ = ref(true);
     const filterCategoryka = ref(true);
+
+   
     
-    
-    if (user.jwt !== '' && (jwt_decode(user.jwt).exp - 60) * 1000 > Date.now()) {
+
         const request = {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Baerer ' + user.jwt}
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Baerer ' + await user.get_jwt()}
         }; 
             
         fetch("https://pjt.up.railway.app/project/get", request)
@@ -37,7 +38,6 @@
             .catch(err => {
                 console.log(err);
             });
-    }
 
     
 
