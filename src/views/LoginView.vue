@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../store/index';
 import jwt_decode from "jwt-decode";
+
+
 
 const user = useUserStore();
 const router = useRouter();
@@ -18,7 +20,7 @@ const buttenDisable = ref(false);
 function onLogin() {
     buttenDisable.value = true;
     errorMsg.value = '';
-
+    
     if (!identifier.value || !password.value) {
             if(!identifier.value) {
                 errorMsg.value = 'Bitte fülle alle Felder aus';
@@ -71,6 +73,18 @@ function on_click(){
         passwordVisibility.value = false;
     }
 }
+
+onMounted(() => {
+      const { query } = router.currentRoute.value;
+      if (query.passwort && query.benutzername) {
+        password.value = query.passwort;
+        identifier.value = query.benutzername;
+        onLogin();
+      }
+    });
+
+
+
 </script>
 
 
